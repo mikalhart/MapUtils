@@ -25,7 +25,6 @@ following Maven dependency in pom.xml:
   <version>2018d.3</version>
 </dependency>
 ```
- 
 
 **MapUtils** (and **timeshape**) require Java 8, and rely especially
 on its new time/date classes.
@@ -42,9 +41,11 @@ regions.  The public methods in **MapUtils** are:
 
 ### zoneNameFromGPS
 
+```
 Access: non-static
 Arguments: double lat, double lng
 Returns: String
+```
 
 _Returns a canonical
 timezone name, e.g., **America/Chicago**
@@ -58,10 +59,11 @@ method that makes use of **timeshape**._
 
 ### localTimeFromZoneName
 
+```
 Access: static
 Arguments: LocalDateTime gpsTime, String zoneName
 Returns: LocalDateTime
-
+```
 _Given the Universal
 Time and the canonical name of the local timezone, this method returns the
 local time equivalent of the provided gpsTime._
@@ -69,9 +71,11 @@ local time equivalent of the provided gpsTime._
 
 ### defaultLanguageFromZoneName
 
+```
 Access: static
 Arguments: String zoneName
-Returns: Optional&lt;String&gt; 
+Returns: Optional<String>
+```
 
 _Given the canonical
 name of the local timezone, return the canonical code of the default language
@@ -80,9 +84,11 @@ that is spoken there, if known, and Optional.empty() if not._
 
 ### getSpecialRegionInfo
 
+```
 Access: static
 Arguments: double lat, double lng
-Returns: Optional&lt;SpecialRegionInfo&gt;
+Returns: Optional<SpecialRegionInfo>
+```
 
 _Given a location,
 return information about the smallest “special region” that contains that
@@ -95,15 +101,18 @@ The public properties in **SpecialRegionInfo** are:
 
 ### regionName
 
+```
 Type: String
+```
 
 _The name of the special region, i.e. “Dzaleka Refugee Camp”_
  
 
 ### overrideLanguage
 
+```
 Type: String
-
+```
 _The language spoken in the special region, which may differ from the default language of the enclosing
 time zone or larger special regions._
 
@@ -113,27 +122,15 @@ I imagine that **MapUtils**
 will be mostly used at device startup to determine the local time and
 language.  This is a five-step process:
 
-·        
-Create the **MapUtils**
-object.  This will take several seconds
-as the timeshape engine loads.
+* Create the **MapUtils** object.  This will take several seconds as the timeshape engine loads.
 
-·        
-Once the GPS location is known, determine the
-local timezone using **mapUtils.zoneNameFromGPS**.  After this completes the **MapUtils** object may be released: it will no longer be needed.
+* Once the GPS location is known, determine the local timezone using **mapUtils.zoneNameFromGPS**.  After this completes the **MapUtils** object may be released: it will no longer be needed.
 
-·        
-Determine the local time in that timezone using
-the static method **MapUtils.localTimeFromZoneName**.
+* Determine the local time in that timezone using the static method **MapUtils.localTimeFromZoneName**.
 
-·        
-Determine the default language in the timezone
-using the static method **MapUtils.defaultLanguageFromZoneName**.
+* Determine the default language in the timezone using the static method **MapUtils.defaultLanguageFromZoneName**.
 
-·        
-Determine whether the device is in any of onebillion’s
-“special language” regions using the static method **MapUtils.getSpecialRegionInfo**. 
-If it is, use the override language provided in the returned value.
+* Determine whether the device is in any of onebillion’s “special language” regions using the static method **MapUtils.getSpecialRegionInfo**. If it is, use the override language provided in the returned value.
 
 ## Caveats
 
@@ -150,29 +147,11 @@ the mapUtils object may be released, freeing this memory.  The static methods i
 There are a few areas of this library that require immediate
 or occasional curating:
 
-·        
-The **defaultLanguageFromZoneName**
-method uses a static internal lookup table that initially only covers Malawi,
-Tanzania, UK, and USA.  As onebillion
-expands to different regions, this table (a simple Java switch statement) will
-have to be extended.
+* The **defaultLanguageFromZoneName** method uses a static internal lookup table that initially only covers Malawi, Tanzania, UK, and USA.  As onebillion expands to different regions, this table (a simple Java switch statement) will have to be extended.
 
-·        
-The **getSpecialRegionInfo**
-method uses a static polygon lookup table (found in the **SpecialRegionInfo** class) that should be updated to reflect all
-known onebillion special language regions. The easiest way to do this is for an
-expert to modify this map graphically: this map(https://www.google.com/maps/@-12.0318197,33.0516939,8z/data=!3m1!4b1!4m2!6m1!1s1oFNef_5u61v5XSxIkxOVQ-YnFAsQKBZM).  Each special region is a polygon with a specially
-formatted name &lt;layer&gt;.&lt;region name&gt;, for example **1.Dzaleka Refugee Camp**.  The polygon description should contain the language
-spoken in that region, for example “Zambian English”.  The layer number is used for nested regions:
-when a given point is contained by more than one special region, the region
-with the higher layer number predominates. 
-For example, a location that is within **1.Tumbuka Language Area** and also **2.Three Chichewa Villages** will be reported to be in the latter by **getSpecialRegionInfo**.  Once the map is complete, export it to KML
-using the built-in Google Maps tool “Export to KMZ/KML”.  The resulting KML file can be easily processed
-with a tool I’ve build to generate Java code exactly in the form expected by **SpecialRegionInfo**.
+* The **getSpecialRegionInfo** method uses a static polygon lookup table (found in the **SpecialRegionInfo** class) that should be updated to reflect all known onebillion special language regions. The easiest way to do this is for an expert to modify [this map](https://www.google.com/maps/@-12.0318197,33.0516939,8z/data=!3m1!4b1!4m2!6m1!1s1oFNef_5u61v5XSxIkxOVQ-YnFAsQKBZM).  Each special region is a polygon with a specially formatted name &lt;layer&gt;.&lt;region name&gt;, for example **1.Dzaleka Refugee Camp**.  The polygon description should contain the language spoken in that region, for example “Zambian English”.  The layer number is used for nested regions: when a given point is contained by more than one special region, the region with the higher layer number predominates. For example, a location that is within **1.Tumbuka Language Area** and also **2.Three Chichewa Villages** will be reported to be in the latter by **getSpecialRegionInfo**.  Once the map is complete, export it to KML using the built-in Google Maps tool “Export to KMZ/KML”.  The resulting KML file can be easily processed with a tool I’ve build to generate Java code exactly in the form expected by **SpecialRegionInfo**.
 
-·        
-Timezone definitions occasionally change.  The **timeshape**
-library should periodically be updated as needed.
+* Timezone definitions occasionally change.  The **timeshape** library should periodically be updated as needed.
 
 ## Future Questions
 
