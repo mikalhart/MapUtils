@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>MapUtils</groupId>
+  <artifactId>MapUtils</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>com.sundial</name>
+  <description>MapUtils</description>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+  		<groupId>net.iakovlev</groupId>
+  		<artifactId>timeshape</artifactId>
+  		<version>2018d.3</version>
+  	</dependency>
+  </dependencies>
+</project>
